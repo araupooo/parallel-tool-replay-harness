@@ -1,0 +1,104 @@
+{
+  "claims": [
+    {
+      "id": "C-01",
+      "log": "outputs/run1/replay-batch-basic.log",
+      "log_sha256": "250a8c632f6ffe872aa8f5a6d4b22a902cd3c0cb7224d30fbc9710e1ba70c6e0",
+      "script": "scripts/run_all.sh (scenarios/run_*.py, harness/replayer.py)",
+      "statement": "All seven asyncio batches record and replay byte-identically, and all four naive-variant traces replay byte-identically.",
+      "traces": {
+        "batch-basic.trace.jsonl": "190c6b631f84181af9e757787c80d1f6adb82bc29cfe307e59565d6d306bff81"
+      }
+    },
+    {
+      "id": "C-02",
+      "log": "outputs/run1/timeout.log",
+      "log_sha256": "2d34a1b54ebdb1474a1ac143446c90407387adc351db74f5293f8f8dc09b5440",
+      "script": "scenarios/run_timeout.py",
+      "statement": "A per-call deadline cuts the slow call at tick 5; the batch ends at tick 6 on the siblings' schedule (status partial_failure).",
+      "traces": {
+        "batch-timeout-naive.trace.jsonl": "923221cc90ded22d90d558f0064963f484dc18badaba40b6ffb079f16aa3420b",
+        "batch-timeout.trace.jsonl": "a67e6f5cfdfa4f69c285c79250d2d99abee1126337d029e1f9f63d01b3f56ba8"
+      }
+    },
+    {
+      "id": "C-03",
+      "log": "outputs/run1/cancellation.log",
+      "log_sha256": "83b23f6ed82501e590e2699595365afc28d1b53920a3b8c4b1279d76e23cafd5",
+      "script": "scenarios/run_cancellation.py",
+      "statement": "Batch cancellation at tick 4 reports a result for every issued call (3/3): the quick call completed, the two in-flight calls are reported cancelled.",
+      "traces": {
+        "batch-cancel-naive.trace.jsonl": "f7c3cab9f1be78fdbb5de3479aa3b8489d19e84f3de33cad51e1a3609d773e30",
+        "batch-cancel.trace.jsonl": "5c7d2e88368f5de00eb0f2bc694d346c81c8d5349d27dec8025a7797f18a8fb1"
+      }
+    },
+    {
+      "id": "C-04",
+      "log": "outputs/run1/partial-failure.log",
+      "log_sha256": "7e6fac0005ef63eeefad516452afea1dbc19ab0052fa3364f4e5430779f2ed20",
+      "script": "scenarios/run_partial_failure.py",
+      "statement": "A failing call is isolated: reported with is_error, both siblings complete, batch status partial_failure, 3/3 results.",
+      "traces": {
+        "batch-partial-naive.trace.jsonl": "3a34dc737d33c5512914e60491bd9efc95e2a3d3d41977b0474bc69425c2be09",
+        "batch-partial.trace.jsonl": "658c96c351dd9bad1832b7c535a07b5ab28876c9864b347817e43c682de8597e"
+      }
+    },
+    {
+      "id": "C-05",
+      "log": "outputs/run1/out-of-order.log",
+      "log_sha256": "2564ceedd7b3e2f6fe12cf031fba184bf77b7630714621cf3aa40bb5d3b1d11a",
+      "script": "scenarios/run_out_of_order.py",
+      "statement": "Out-of-order completions (fast, mid, slow) are matched to calls by tool_call_id; position-based matching misattributes all three results.",
+      "traces": {
+        "batch-reorder.trace.jsonl": "92b7959b3bd18a5de01ebb2028e6f8a45b26a3be3e1063d4d3e034f892e9270b"
+      }
+    },
+    {
+      "id": "C-06",
+      "log": "outputs/run1/repeat-cap.log",
+      "log_sha256": "a8b8a5d6bb63bd53c2a34f36c11ac118d5b0695618f6d03781700ef5ff4471ed",
+      "script": "scenarios/run_repeat_cap.py",
+      "statement": "The fourth identical call in one turn is refused without running (cap 3); it is still reported (4/4 results).",
+      "traces": {
+        "batch-repeat.trace.jsonl": "cc1009b2b26ccd8b2d899cd43d5bf6ad154155749614ffa16248d570c7e3d01d"
+      }
+    },
+    {
+      "id": "C-07",
+      "log": "outputs/run1/nested-timing.log",
+      "log_sha256": "76aa64d43bcbcf5b5ecce24045812174050ccd6e8d6352401c23c38447e43185",
+      "script": "scenarios/run_nested_timing.py",
+      "statement": "The nested-call timing guard emits no nested timing events; without the guard the nested interval (ticks 2..5) lies strictly inside the outer interval (ticks 0..6).",
+      "traces": {
+        "batch-nested-unguarded.trace.jsonl": "0a39af566402a6fae9e3220a6fb546a95f9a5a59949475400ccc00eeeb43b464",
+        "batch-nested.trace.jsonl": "5b17ddcdb9115cd37bcd7c219d6006c92f7c6dcf5ae83e6521e973dab33f69d2"
+      }
+    },
+    {
+      "id": "C-08",
+      "log": "outputs/run1/shell.log",
+      "log_sha256": "d2bccd7c2ed797c8c9c6a66c19262cfe60453ab284aaee6138192c618d2d902a",
+      "script": "components/shell_runner/run_parallel.sh",
+      "statement": "The shell runner's four real parallel processes complete in the manifest's declared order with matching exit codes and output digests; its trace replays byte-identically.",
+      "traces": {
+        "shell/batch-shell.trace.jsonl": "cd7a310e56bd06be839c84ede976949430880a8131ef8d8e663eea68ae5da882"
+      }
+    },
+    {
+      "id": "C-09",
+      "log": "outputs/run2-clean/clean-reproduce.log",
+      "log_sha256": "75221eb105e94f86ed0b3e8701aed9889a5a749dc1fe778f7869d62b3b045bf0",
+      "script": "scripts/clean_reproduce.sh",
+      "statement": "A clean-environment reproduction from a fresh copy produces outputs byte-identical to the first run.",
+      "traces": {}
+    },
+    {
+      "id": "C-10",
+      "log": "findings.md",
+      "log_sha256": "8811ccc7257d1866a782a7cda8425b61aba554d29dca6707f43d21e74e0326dc",
+      "script": "source inspection (see citations.md section 4)",
+      "statement": "The harness rules match the inspected reference implementation (CorbanuTerminal parallel.rs, commit 7b5b368f): parallel gate, cancellation reporting, nested timing guard, 3-call repeat cap.",
+      "traces": {}
+    }
+  ]
+}
