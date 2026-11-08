@@ -1,0 +1,23 @@
+ok: basic
+ok: timeout
+ok: cancellation
+ok: partial-failure
+ok: out-of-order
+ok: repeat-cap
+ok: nested-timing
+ok: shell
+ok: replay-batch-basic
+ok: replay-batch-timeout
+ok: replay-batch-cancel
+ok: replay-batch-partial
+ok: replay-batch-reorder
+ok: replay-batch-repeat
+ok: replay-batch-nested
+ok: replay-timeout-naive
+ok: replay-cancel-naive
+ok: replay-partial-naive
+ok: replay-nested-unguarded
+ok: shell-replay
+ok: shell trace replay is byte-identical
+run_all: ALL PASS
+clean reproduction: MATCH (run1 and run2-clean are byte-identical)
